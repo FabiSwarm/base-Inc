@@ -14,7 +14,6 @@ export function ProductModel({ model, index }: { model: Model; index: number }) 
         <p>{model.fit}</p>
         {model.href ? <Button asChild variant="text"><a href={model.href}>Entdecken</a></Button> : <ProductDetailsDialog model={model} />}
       </div>
-      <div>Fabian</div>
     </article>
   );
 }
