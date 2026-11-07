@@ -8,7 +8,7 @@ export function HeroSection() {
       <div className="product-frame hero-frame" data-product="hero">
         <ProductImage asset="front" preload sizes="(max-width: 767px) 250px, (max-width: 1023px) 360px, 440px" />
       </div>
-      <div className="hero-copy" data-hero-copy>
+      <div className="hero-copy">
         <p className="eyebrow">{content.hero.eyebrow}</p>
         <h1 id="hero-title">{content.hero.title}</h1>
         <Button asChild><a href="#modelle">{content.hero.cta}</a></Button>

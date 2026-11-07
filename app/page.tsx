@@ -1,5 +1,6 @@
 import { SiteHeader } from "@/components/layout/site-header";
-import { ProductStory } from "@/components/motion/product-story";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { PageReveals } from "@/components/motion/reveal";
 import { HeroSection } from "@/components/sections/hero-section";
 import { ModelsSection } from "@/components/sections/models-section";
 import { SizingSection } from "@/components/sections/sizing-section";
@@ -10,14 +11,15 @@ export default function Home() {
     <>
       <a href="#inhalt" className="skip-link">Zum Inhalt</a>
       <SiteHeader />
-      <main id="inhalt" tabIndex={-1}>
-        <ProductStory>
+      <PageReveals>
+        <main id="inhalt" tabIndex={-1}>
           <HeroSection />
           <ModelsSection />
           <SizingSection />
           <MaterialSection />
-        </ProductStory>
-      </main>
+        </main>
+        <SiteFooter />
+      </PageReveals>
     </>
   );
 }

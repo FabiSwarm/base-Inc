@@ -7,6 +7,14 @@ export const navigation = [
   { href: "#material", label: "Material & Alltag" },
 ] as const;
 
+// Navigation prepared for the future legal pages; legal copy is not yet supplied.
+export const legalNavigation = [
+  { href: "/impressum", label: "Impressum" },
+  { href: "/datenschutz", label: "Datenschutz" },
+  { href: "/agb", label: "AGB" },
+  { href: "/widerruf", label: "Widerruf" },
+] as const;
+
 export const models = [
   { id: "base-i", name: "BASE I", fit: "Wide Leg", description: "Die BASE Anzugshose im weiten Schnitt. Für deinen Alltag." },
   { id: "base-ii", name: "BASE II", fit: "Straight Leg", description: "Die BASE Anzugshose im geraden Schnitt. Für deinen Alltag." },

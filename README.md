@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BASE
 
-## Getting Started
+Responsive Landingpage mit Next.js 16, React 19, TypeScript, Tailwind CSS 4 und angepassten shadcn/Radix-Primitives. Der Shop ist noch nicht an ein Backend angebunden.
 
-First, run the development server:
+## Starten
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Die Seite läuft unter http://localhost:3000. Für einen Produktionsstart: `pnpm build` und anschließend `pnpm start`. `next/font` lädt die freie Geist-Schrift beim Build und liefert sie anschließend selbst aus; der erste Build benötigt dafür Netzwerkzugriff.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Gestaltung und Inhalte
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `app/globals.css`: Design-Tokens, responsive Layouts, Hero-Bodenschatten (`--hero-shadow-*`) und Footer.
+- `lib/product-assets.ts`: tatsächliche Dateien und Bildabmessungen aus `public/product/`. Beide Modelle verwenden dieselbe unveränderte Frontansicht.
+- `lib/content.ts`: Seiteninhalte, Modelldaten, Hauptnavigation und Legal-Links.
+- `components/layout/site-footer.tsx`: Footer mit Entdecken- und Rechtliches-Navigation.
+- `lib/motion-config.ts`: Fade-Dauer, Stagger, Ease und Auslöseabstand.
+- `components/motion/reveal.tsx`: einmalige GSAP-Fade-ins über IntersectionObserver. Ausschließlich Deckkraft; keine Produktfahrten, Zooms, Bildkopien, Pins oder Scroll-Timelines. Sichtbare Startinhalte bleiben direkt sichtbar. Reduzierte Bewegung, Tastaturfokus, Anker und fehlendes JavaScript werden berücksichtigt.
 
-## Learn More
+Die vorhandene `app/`-Struktur und die Next.js-Konfiguration bleiben erhalten. Die Abschnitte und der Footer sind Server Components; Animationen, Sheets und Dialoge bilden gezielte Client-Grenzen.
 
-To learn more about Next.js, take a look at the following resources:
+## Prüfungen
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm typecheck
+pnpm lint
+pnpm build
+# In einem zweiten Terminal, während pnpm dev läuft:
+pnpm test:e2e
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Die Browser-Tests verwenden den installierten Google Chrome und prüfen 1440, 1024, 768, 390 und 360 px. Sie prüfen Layout, Bilder, Footer-Navigation, Dialoge, Tastaturfokus, Fade-ins, Reload, Resize, reduzierte Bewegung, deaktiviertes JavaScript und automatisierte Accessibility-Regeln. `PLAYWRIGHT_BASE_URL` kann einen anderen Testserver setzen. Mit `PLAYWRIGHT_CHANNEL=chromium` lässt sich alternativ ein über Playwright installierter Chromium verwenden.
 
-## Deploy on Vercel
+Screenshots liegen nach dem Testlauf unter `artifacts/screenshots/`, der HTML-Bericht unter `playwright-report/`. Diese generierten Dateien sind nicht für die Versionsverwaltung vorgesehen.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Noch offen
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Die Legal-Links `/impressum`, `/datenschutz`, `/agb` und `/widerruf` sind als Navigation vorbereitet. Die Zielseiten und freigegebenen Rechtstexte sind ausdrücklich noch nicht implementiert.
+- Die Messanleitung ist ein gekennzeichneter Entwurf; Messmethode und Messpunkte müssen noch freigegeben werden.
+- Produktseiten, Preise, Verfügbarkeit, Warenkorb, Bestellung und Shop-API folgen. Bis dahin zeigen die Modell-Dialoge bekannte Angaben und der Warenkorb einen ehrlichen leeren Zustand.

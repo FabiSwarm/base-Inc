@@ -3,14 +3,14 @@ import AxeBuilder from "@axe-core/playwright";
 
 async function ready(page: Page) {
   await page.goto("/");
-  await page.locator(".product-story").waitFor();
-  await expect(page.locator(".product-story")).toHaveAttribute("data-motion", /desktop|mobile|reduced/);
+  await page.locator(".page-content").waitFor();
+  await expect(page.locator(".page-content")).toHaveAttribute("data-motion", /fade|reduced/);
   await page.evaluate(() => document.fonts.ready);
 }
 
 async function jump(page: Page, y: number) {
   await page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), y);
-  await page.waitForTimeout(450); // Allow the deliberately smoothed scrub to settle.
+  await page.waitForTimeout(950); // Wait for the opacity reveal and its short text stagger.
 }
 
 async function noOverflow(page: Page) {
@@ -22,7 +22,20 @@ test("static reference layout, imagery, centering and responsive order", async (
   await ready(page);
   await expect(page.locator("main section")).toHaveCount(4);
   await expect(page.locator("h1")).toHaveText("Die Essenz von Stil.");
-  await expect(page.locator(".story-sprite")).toHaveCount(0);
+  await expect(page.locator(".story-sprite, .story-overlay, .pin-spacer")).toHaveCount(0);
+  const shadow = await page.locator(".hero-frame").evaluate((element) => {
+    const style = getComputedStyle(element, "::after");
+    return { content: style.content, width: parseFloat(style.width), height: parseFloat(style.height), background: style.backgroundColor };
+  });
+  expect(shadow.content).toBe('""');
+  expect(shadow.width).toBeGreaterThan(100);
+  expect(shadow.height).toBeGreaterThan(0);
+  expect(shadow.background).not.toBe("rgba(0, 0, 0, 0)");
+  const footer = page.getByRole("contentinfo");
+  for (const [name, href] of [["Impressum", "/impressum"], ["Datenschutz", "/datenschutz"], ["AGB", "/agb"], ["Widerruf", "/widerruf"]]) {
+    await expect(footer.getByRole("link", { name, exact: true })).toHaveAttribute("href", href);
+  }
+  await expect(footer.getByRole("navigation", { name: "ENTDECKEN" }).getByRole("link")).toHaveCount(4);
   const logo = await page.locator(".wordmark").boundingBox();
   const header = await page.locator(".site-header").boundingBox();
   expect(Math.abs(logo!.x + logo!.width / 2 - (header!.x + header!.width / 2))).toBeLessThan(1);
@@ -42,6 +55,7 @@ test("static reference layout, imagery, centering and responsive order", async (
     expect(await image.evaluate((img) => getComputedStyle(img).objectFit)).toBe("contain");
     expect(await image.evaluate((img) => getComputedStyle(img).filter)).toBe("none");
   }
+  await footer.scrollIntoViewIfNeeded();
   await noOverflow(page);
   await jump(page, 0);
   await page.screenshot({ path: `artifacts/screenshots/${testInfo.project.name}-static.png`, fullPage: true });
@@ -87,7 +101,8 @@ test("both models and measurement draft open accessible dialogs", async ({ page 
   await expect(dialog).toBeHidden();
 });
 
-test("forward / reverse scroll, restored position and breakpoint cleanup", async ({ page }, testInfo) => {
+test("fade-ins preserve product geometry, restored position and reduced motion", async ({ page }, testInfo) => {
+  test.setTimeout(60_000);
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
@@ -96,22 +111,28 @@ test("forward / reverse scroll, restored position and breakpoint cleanup", async
   for (const fraction of [0, 0.2, 0.45, 0.7, 1, 0.7, 0.45, 0.2, 0]) {
     await jump(page, max * fraction);
     await noOverflow(page);
-    expect(await page.locator(".story-sprite").evaluateAll((sprites) => sprites.every((sprite) => !sprite.getAttribute("style")?.includes("NaN")))).toBe(true);
+    for (const product of await page.locator("[data-product]").all()) {
+      await expect(product).toHaveCSS("transform", "none");
+      const bounds = await product.boundingBox();
+      if (bounds && bounds.y >= 0 && bounds.y < page.viewportSize()!.height - 28) {
+        await expect(product).toHaveCSS("opacity", "1");
+      }
+    }
   }
   await jump(page, max * 0.55);
   await page.reload();
-  await expect(page.locator(".product-story")).toHaveAttribute("data-motion", /desktop|mobile/);
+  await expect(page.locator(".page-content")).toHaveAttribute("data-motion", /fade/);
   await page.waitForTimeout(600);
   expect(await page.evaluate(() => scrollY)).toBeGreaterThan(0);
   await page.screenshot({ path: `artifacts/screenshots/${testInfo.project.name}-motion.png` });
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(page.locator(".product-story")).toHaveAttribute("data-motion", "mobile");
+  await expect(page.locator(".page-content")).toHaveAttribute("data-motion", "fade");
   await expect(page.locator(".story-sprite")).toHaveCount(0);
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await expect(page.locator(".product-story")).toHaveAttribute("data-motion", "desktop");
-  await expect(page.locator(".story-sprite")).toHaveCount(4);
+  await expect(page.locator(".page-content")).toHaveAttribute("data-motion", "fade");
+  await expect(page.locator(".story-sprite, .story-overlay")).toHaveCount(0);
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(page.locator(".product-story")).toHaveAttribute("data-motion", "reduced");
+  await expect(page.locator(".page-content")).toHaveAttribute("data-motion", "reduced");
   await expect(page.locator(".story-sprite")).toHaveCount(0);
   await expect(page.locator(".pin-spacer")).toHaveCount(0);
   for (const product of await page.locator("[data-product]").all()) {
@@ -124,16 +145,16 @@ test("forward / reverse scroll, restored position and breakpoint cleanup", async
 
 test("deep links keep the destination visible", async ({ page }) => {
   await page.goto("/#sizing");
-  await expect(page.locator(".product-story")).toHaveAttribute("data-motion", /desktop|mobile/);
+  await expect(page.locator(".page-content")).toHaveAttribute("data-motion", /fade/);
   await expect(page.getByRole("heading", { name: "Eine Größe. Deine Länge." })).toBeInViewport();
   await page.getByRole("button", { name: "Hosenlänge messen" }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
 });
 
-test("static content survives disabled JavaScript", async ({ browser }, testInfo) => {
+test("static content survives disabled JavaScript", async ({ browser, baseURL }, testInfo) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: testInfo.project.use.viewport });
   const page = await context.newPage();
-  await page.goto("http://127.0.0.1:3000");
+  await page.goto(baseURL!);
   await expect(page.locator("main section")).toHaveCount(4);
   await expect(page.getByRole("heading", { name: "Die Essenz von Stil." })).toBeVisible();
   await expect(page.locator("[data-product]")).toHaveCount(5);
