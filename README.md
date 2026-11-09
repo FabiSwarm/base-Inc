@@ -9,7 +9,7 @@ pnpm install
 pnpm dev
 ```
 
-Die Seite läuft unter http://localhost:3000. Für einen Produktionsstart: `pnpm build` und anschließend `pnpm start`. `next/font` lädt die freie Geist-Schrift beim Build und liefert sie anschließend selbst aus; der erste Build benötigt dafür Netzwerkzugriff.
+Die Seite läuft unter http://localhost:3000. Für einen Produktionsstart: `pnpm build` und anschließend `pnpm start`. `next/font` lädt IBM Plex Mono beim Build und liefert die Schrift anschließend selbst aus; der erste Build benötigt dafür Netzwerkzugriff.
 
 ## Gestaltung und Inhalte
 
@@ -35,6 +35,16 @@ pnpm test:e2e
 Die Browser-Tests verwenden den installierten Google Chrome und prüfen 1440, 1024, 768, 390 und 360 px. Sie prüfen Layout, Bilder, Footer-Navigation, Dialoge, Tastaturfokus, Fade-ins, Reload, Resize, reduzierte Bewegung, deaktiviertes JavaScript und automatisierte Accessibility-Regeln. `PLAYWRIGHT_BASE_URL` kann einen anderen Testserver setzen. Mit `PLAYWRIGHT_CHANNEL=chromium` lässt sich alternativ ein über Playwright installierter Chromium verwenden.
 
 Screenshots liegen nach dem Testlauf unter `artifacts/screenshots/`, der HTML-Bericht unter `playwright-report/`. Diese generierten Dateien sind nicht für die Versionsverwaltung vorgesehen.
+
+## Shopify-Vorbereitung
+
+Die [Shopify-Ordnerübersicht](lib/shopify/README.md) beschreibt die vorbereiteten
+Bereiche für API-Zugriff, GraphQL-Abfragen, Warenkorb, Datentypen und Produktseiten.
+Jeder neue Ordner enthält eine kurze Erklärung seiner Aufgabe.
+
+[`.env.example`](.env.example) enthält die Vorlage für die spätere Konfiguration.
+Es gibt noch keine aktive Shopify-Verbindung, neue Shop-Route oder zusätzliche
+Abhängigkeit. Die Landingpage läuft weiterhin ohne Shopify-Zugangsdaten.
 
 ## Noch offen
 

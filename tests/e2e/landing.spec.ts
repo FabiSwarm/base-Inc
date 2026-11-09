@@ -23,14 +23,19 @@ test("static reference layout, imagery, centering and responsive order", async (
   await expect(page.locator("main section")).toHaveCount(4);
   await expect(page.locator("h1")).toHaveText("Die Essenz von Stil.");
   await expect(page.locator(".story-sprite, .story-overlay, .pin-spacer")).toHaveCount(0);
-  const shadow = await page.locator(".hero-frame").evaluate((element) => {
-    const style = getComputedStyle(element, "::after");
-    return { content: style.content, width: parseFloat(style.width), height: parseFloat(style.height), background: style.backgroundColor };
-  });
-  expect(shadow.content).toBe('""');
-  expect(shadow.width).toBeGreaterThan(100);
-  expect(shadow.height).toBeGreaterThan(0);
-  expect(shadow.background).not.toBe("rgba(0, 0, 0, 0)");
+  const shadows = await page.locator(".hero-frame").evaluate((element) =>
+    ["::before", "::after"].map((pseudo) => {
+      const style = getComputedStyle(element, pseudo);
+      return { content: style.content, width: parseFloat(style.width), height: parseFloat(style.height), center: parseFloat(style.left), background: style.backgroundColor };
+    })
+  );
+  for (const shadow of shadows) {
+    expect(shadow.content).toBe('""');
+    expect(shadow.width).toBeGreaterThan(0);
+    expect(shadow.height).toBeGreaterThan(0);
+    expect(shadow.background).not.toBe("rgba(0, 0, 0, 0)");
+  }
+  expect(shadows[0].center + shadows[0].width / 2).toBeLessThan(shadows[1].center - shadows[1].width / 2);
   const footer = page.getByRole("contentinfo");
   for (const [name, href] of [["Impressum", "/impressum"], ["Datenschutz", "/datenschutz"], ["AGB", "/agb"], ["Widerruf", "/widerruf"]]) {
     await expect(footer.getByRole("link", { name, exact: true })).toHaveAttribute("href", href);

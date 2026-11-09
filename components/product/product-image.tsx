@@ -10,6 +10,6 @@ export function ProductImage({ asset, className, sizes, preload = false, decorat
     <Image src={image.src} width={image.width} height={image.height}
       alt={decorative ? "" : image.alt} aria-hidden={decorative || undefined}
       sizes={sizes} preload={preload} quality={90} draggable={false}
-      className={cn("product-image", className)} />
+      className={cn("product-image", className)} loading="eager"/>
   );
 }
