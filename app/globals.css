@@ -38,6 +38,9 @@
   --muted: #5e5b5a; /* Dezentere Farbe für Zusatztexte */
   --border: #2c2b2a; /* Rahmenfarbe umrandeter Buttons */
   --surface-overlay: rgb(23 23 22 / 24%); /* Abdunklung hinter geöffneten Fenstern; Prozentwert = Deckkraft */
+  --section-divider-color: rgb(23 23 22 / 14%); /* Dezente Trennlinien zwischen Inhaltsbereichen; Prozentwert = Deckkraft */
+  --section-divider-width: min(72%, 880px); /* Breite der mittig ausgerichteten Trennlinien */
+  --section-divider-height: 1px; /* Dicke der Trennlinien */
   --font-body: var(--font-ibm-plex-mono), "Courier New", monospace; /* Schriftfamilie; IBM Plex Mono wird in app/layout.tsx geladen */
   --text-small: 0.9375rem; /* Kleine Texte, unter anderem Menü, Buttons und Hinweise */
   --text-body: 1.0625rem; /* Standardgröße für normalen Text */
@@ -332,6 +335,24 @@ section:focus, main:focus {
   margin-inline: auto;
   text-align: center;
   scroll-margin-top: var(--space-4);
+}
+
+/* SECTIONDIVIDER: Dünne Linie im freien Abstand vor jedem weiteren Inhaltsbereich.
+   Die erste Section erhält keine Linie. Die vorhandenen Abstände bleiben erhalten. */
+.section + .section {
+  position: relative;
+}
+
+.section + .section::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--space-section) / 2);
+  inset-inline: 0;
+  margin-inline: auto;
+  width: var(--section-divider-width);
+  height: var(--section-divider-height);
+  background: var(--section-divider-color);
+  pointer-events: none;
 }
 
 /* Kleine Beschriftung über einer Überschrift, zum Beispiel „DIE BASE ANZUGSHOSE“ oder „SIZING“. */
