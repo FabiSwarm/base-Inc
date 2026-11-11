@@ -13,7 +13,7 @@ export function MeasurementGuideDialog() {
           <DialogTitle>Deine passende Länge.</DialogTitle>
           <DialogDescription>Die Messanleitung wird noch abgestimmt.</DialogDescription>
         </DialogHeader>
-        <p>Hier findest du künftig die freigegebene Anleitung, mit der du deine Hosenlänge für BASE bestimmst.</p>
+        <p>Hier findest du künftig die freigegebene Anleitung, mit der du deine Hosenlänge für ASSISE bestimmst.</p>
         <p className="muted">Messpunkte, Messmethode und die Übermittlung deines Maßes stehen noch nicht fest. Dieser Entwurf ist keine verbindliche Bestellanleitung.</p>
         <DialogClose asChild><Button variant="outline">Verstanden</Button></DialogClose>
       </DialogContent>

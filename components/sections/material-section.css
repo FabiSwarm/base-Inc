@@ -1,0 +1,15 @@
+/* MATERIAL: kleinere, mittig ausgerichtete gefaltete Hose. */
+.material-section { padding-block: var(--space-section) var(--space-6); }
+.material-section .section-intro { gap: clamp(0.625rem, 1vw, 1.125rem); }
+.material-section .section-description { line-height: 1.45; }
+.material-stage { margin-top: 2rem; }
+.material-frame { width: min(85%, 36rem); aspect-ratio: 3 / 2; }
+.material-caption { margin-top: 0.5rem; }
+.material-caption p { font-size: var(--text-subtitle); font-weight: 300; letter-spacing: 0.045em; text-wrap: balance; }
+.material-caption strong { font-weight: 500; }
+.material-caption .base-button { margin-top: 0.75rem; }
+@media (max-width: 767px) {
+  .material-stage { margin-top: 1.25rem; }
+  .material-caption { margin-top: 2rem; }
+  .material-caption p { line-height: 1.45; }
+}

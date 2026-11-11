@@ -1,6 +1,7 @@
 import { ProductImage } from "@/components/product/product-image";
 import { MeasurementGuideDialog } from "@/components/sizing/measurement-guide-dialog";
 import { content } from "@/lib/content";
+import "./sizing-section.css";
 
 export function SizingSection() {
   return (

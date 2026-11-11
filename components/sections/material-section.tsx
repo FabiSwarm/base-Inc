@@ -1,6 +1,7 @@
 import { ProductImage } from "@/components/product/product-image";
 import { Button } from "@/components/ui/button";
 import { content } from "@/lib/content";
+import "./material-section.css";
 
 export function MaterialSection() {
   return (
@@ -10,12 +11,14 @@ export function MaterialSection() {
         <h2 id="material-title">{content.material.title}</h2>
         <p className="section-description">{content.material.description}</p>
       </div>
-      <div className="product-frame material-frame" data-product="lay" data-reveal>
-        <ProductImage asset="lay" sizes="(max-width: 767px) 88vw, (max-width: 1023px) 560px, 680px" />
+      <div className="material-stage">
+        <div className="product-frame material-frame" data-product="lay" data-reveal>
+          <ProductImage asset="lay" sizes="(max-width: 767px) 80vw, 576px" />
+        </div>
       </div>
       <div className="material-caption" data-reveal="stagger">
-        <p>{content.material.benefits}</p>
-        <Button asChild variant="text"><a href="#modelle">{content.material.cta}</a></Button>
+        <p>{content.material.benefits.before} <strong>{content.material.benefits.emphasis}</strong> {content.material.benefits.after}</p>
+        <Button asChild variant="primary"><a href="#modelle">{content.material.cta}</a></Button>
       </div>
     </section>
   );

@@ -6,19 +6,19 @@ export const productAssets = {
     src: "/product/base_front.webp",
     width: 1024,
     height: 1536,
-    alt: "Anthrazitfarbene BASE Anzugshose, vollständige Frontansicht ohne Model",
+    alt: "Anthrazitfarbene ASSISE Anzugshose, vollständige Frontansicht ohne Model",
   },
   leg: {
     src: "/product/base_leg.webp",
     width: 1024,
     height: 1536,
-    alt: "Einzelnes Hosenbein der BASE mit sichtbarer Stoffstruktur und Saum",
+    alt: "Einzelnes Hosenbein der ASSISE mit sichtbarer Stoffstruktur und Saum",
   },
   lay: {
     src: "/product/base_lay.webp",
     width: 1536,
     height: 1024,
-    alt: "Gefaltete anthrazitfarbene BASE Anzugshose mit Bund und Knopf",
+    alt: "Gefaltete anthrazitfarbene ASSISE Anzugshose mit Bund und Knopf",
   },
 } as const satisfies Record<string, ProductAsset>;
 

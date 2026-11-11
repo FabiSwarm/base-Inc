@@ -1,0 +1,64 @@
+/* STARTANSICHT: Bildhöhe, seitliche Texte und Abstand zum Haupttitel. */
+.hero-section {
+  /* Bild und sämtliche Texte inklusive Button gemeinsam etwas höher setzen. */
+  position: relative;
+  top: clamp(-1rem, -1.5svh, -0.5rem);
+  /* Kopfzeile, Bild und kompletter Textblock teilen sich die Bildschirmhöhe. */
+  height: calc(100svh - var(--header-height));
+  min-height: 30rem;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: clamp(1rem, 3svh, 2.5rem);
+}
+.hero-stage {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: clamp(1rem, 3vw, 4rem);
+}
+.hero-frame { height: 96%; max-height: 46rem; max-width: 100%; aspect-ratio: 2 / 3; }
+.hero-aside {
+  font-size: var(--text-body);
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  text-align: left;
+  line-height: 1.45;
+}
+.hero-aside--left { justify-self: center; }
+.hero-aside--right { justify-self: center; }
+.hero-aside-title { text-transform: uppercase; letter-spacing: 0.12em; font-weight: 650; margin-bottom: 0.1rem; }
+.hero-copy { flex-shrink: 0; margin-top: clamp(1.5rem, 3svh, 2.5rem); }
+.hero-copy .eyebrow {
+  font-size: var(--text-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.175em;
+}
+.hero-copy h1 {
+  font-size: var(--text-title);
+  font-weight: 350;
+  letter-spacing: 0.085em;
+  margin-block: clamp(1rem, 2svh, 1.5rem) clamp(1.25rem, 3svh, 2.25rem);
+}
+.hero-copy .base-button {
+  /* Bewusst unverändert: nur der erste „Jetzt entdecken“-Button. */
+  font-size: clamp(0.75rem, 0.85vw, 1rem);
+  font-weight: 400;
+  letter-spacing: 0.025em;
+  padding-inline: 1.875rem;
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  .hero-stage { column-gap: 0.5rem; }
+}
+@media (max-width: 767px) {
+  .hero-stage { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: clamp(1rem, 3svh, 2rem) 1rem; }
+  .hero-frame { grid-column: 1 / -1; grid-row: 1; max-height: 28.75rem; }
+  .hero-aside { grid-row: 2; justify-self: stretch; }
+  .hero-aside--right { text-align: right; }
+  .hero-aside-title { letter-spacing: 0.085em; }
+  .hero-copy { margin-top: clamp(1.25rem, 3svh, 2rem); }
+  .hero-section { padding-bottom: 1rem; }
+}

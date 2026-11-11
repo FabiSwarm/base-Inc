@@ -5,7 +5,7 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="footer-grid">
         <div className="footer-brand" data-reveal="stagger">
-          <a className="footer-wordmark" href="#hero" aria-label="BASE — zum Seitenanfang">BASE</a>
+          <a className="footer-wordmark" href="#hero" aria-label="ASSISE — zum Seitenanfang">ASSISE</a>
           <p>Die Essenz von Stil.</p>
         </div>
         <nav aria-labelledby="footer-discover" className="footer-nav" data-reveal>
@@ -22,7 +22,7 @@ export function SiteFooter() {
         </nav>
       </div>
       <div className="footer-bottom" data-reveal>
-        <small>© BASE</small>
+        <small>© ASSISE</small>
         <a href="#hero">Zurück nach oben <span aria-hidden="true">↑</span></a>
       </div>
     </footer>

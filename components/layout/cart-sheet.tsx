@@ -19,7 +19,7 @@ export function CartSheet() {
           <ShoppingBag size={40} strokeWidth={1} aria-hidden="true" />
           <h3>Hier ist noch Platz.</h3>
           <SheetDescription>Dein Warenkorb ist leer. Der Online-Shop ist noch in Vorbereitung. Aktuell sind keine Bestellungen möglich.</SheetDescription>
-          <SheetClose asChild><Button variant="outline">Weiter entdecken</Button></SheetClose>
+          <SheetClose asChild><Button variant="primary">Weiter entdecken</Button></SheetClose>
         </div>
       </SheetContent>
     </Sheet>

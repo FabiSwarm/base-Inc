@@ -16,8 +16,8 @@ export function MobileMenu() {
         document.querySelector<HTMLElement>(destination.current)?.focus({ preventScroll: true });
         destination.current = null;
       }}>
-        <SheetTitle className="sheet-wordmark">BASE</SheetTitle>
-        <SheetDescription className="sr-only">Entdecke die BASE Anzugshose und finde deine Länge.</SheetDescription>
+        <SheetTitle className="sheet-wordmark">ASSISE</SheetTitle>
+        <SheetDescription className="sr-only">Entdecke die ASSISE Anzugshose und finde deine Länge.</SheetDescription>
         <nav aria-label="Hauptnavigation" className="menu-links">
           {navigation.map(({ href, label }) => (
             <SheetClose asChild key={href}>

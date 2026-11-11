@@ -7,10 +7,10 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, Di
 export function ProductDetailsDialog({ model }: { model: ProductModel }) {
   return (
     <Dialog>
-      <DialogTrigger asChild><Button variant="text" aria-label={`${model.name} entdecken`}>Entdecken</Button></DialogTrigger>
+      <DialogTrigger asChild><Button variant="primary" aria-label={`${model.name} entdecken`}>Entdecken</Button></DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <p className="eyebrow">DIE BASE ANZUGSHOSE</p>
+          <p className="eyebrow">DIE ASSISE ANZUGSHOSE</p>
           <DialogTitle>{model.name}</DialogTitle>
           <DialogDescription>{model.fit}</DialogDescription>
         </DialogHeader>

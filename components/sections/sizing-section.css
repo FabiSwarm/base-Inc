@@ -1,0 +1,16 @@
+/* LÄNGE: Hosenbein und zwei gleichwertige Kürzungsoptionen. */
+.sizing-section { padding-top: var(--space-section); }
+.sizing-section .section-intro { gap: clamp(0.625rem, 1vw, 1.125rem); }
+.sizing-section .section-description { line-height: 1.45; }
+.sizing-frame { height: clamp(18rem, 25vw, 25rem); aspect-ratio: 2 / 3; margin-top: 2.75rem; }
+.sizing-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); width: min(100%, 70rem); margin: 1.5rem auto 0; }
+.sizing-option h3 { font-size: var(--text-body); font-weight: 400; text-transform: uppercase; letter-spacing: 0.085em; }
+.sizing-option p { margin-top: 0.625rem; color: var(--muted); line-height: 1.45; }
+.sizing-option .base-button { margin-top: 0.75rem; color: var(--muted); }
+@media (hover: hover) {
+  .sizing-option .base-button:hover { color: var(--background); }
+}
+@media (max-width: 767px) {
+  .sizing-frame { height: 17rem; margin-top: 2rem; }
+  .sizing-options { grid-template-columns: minmax(0, 1fr); gap: 2rem; margin-top: 1.5rem; }
+}

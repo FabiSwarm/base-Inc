@@ -1,614 +1,231 @@
-/* WEGWEISER FÜR DESIGN-ÄNDERUNGEN
-
-  01 Zentrale Einstellungen: Farben, Schriftgrößen, Abstände und Hosenschatten
-  02–06 Grundlagen: Tailwind, Schrift, Kopfzeile, Buttons und gemeinsame Regeln
-  07 Große Hose: Bildgröße, Schattenposition und „Die Essenz von Stil.“
-  08–10 Inhalte: Modelle, Länge und Material
-  11–14 Fußbereich, Dialoge, Menü, Warenkorb und Animationen
-  15–16 Tablet- und Handy-Anpassungen
-  17 Weniger Bewegung
-
-  Schnell suchen: „SCHATTEN“, „KOPFZEILE“, „MODELLE“ oder „HANDY“.
-  Die Grundregeln gelten für alle Bildschirmgrößen. Die Tablet-/Handy-Regeln am
-  Ende überschreiben einzelne Werte. Bei unerwarteten Ergebnissen auch dort suchen.
-
-  Kleine CSS-Lesehilfe:
-  .name = Klasse eines Bauteils; h1/h2/h3 = Überschriften; :hover = Maus darüber.
-  ::before und ::after zeichnen hier die beiden Schatten ohne zusätzliche Bilder.
-  margin = Außenabstand, padding = Innenabstand, gap = Abstand zwischen Elementen.
-  -inline = links/rechts, -block = oben/unten (bei der hier verwendeten Schreibrichtung).
-  font-size = Schriftgröße, font-weight = Schriftstärke (300 Light / 700 Bold).
-  line-height = Zeilenhöhe, letter-spacing = Buchstabenabstand.
-  var(--name) verweist auf eine zentrale Einstellung; spezielle Regeln können sie ersetzen.
-  clamp(Minimum, flexibler Wert, Maximum) passt einen Wert an die Bildschirmgröße an.
-  rem = relativ zur Grundschriftgröße, em = relativ zur Schriftgröße des Elements,
-  vw = Prozent der Bildschirmbreite, svh = Prozent der kleinen Viewport-Höhe
-  (auf Handys bei eingeblendeten Browserleisten); px = CSS-Pixel.
-
-  Schriftdateien und geladene Schriftschnitte: app/layout.tsx.
-  Texte und Bezeichnungen: lib/content.ts bzw. die jeweilige Komponente.
- */
 @import "tailwindcss";
 
-/* ========== 01 · ZENTRALE EINSTELLUNGEN ========== */
-/* Zentrale Einstellungen: Diese Variablen werden in den Bereichen weiter unten mit var(...) verwendet. */
+/* Gemeinsame Typografie und Farben. Abschnitts-Layouts liegen direkt neben
+   ihren Komponenten in components/sections/*-section.css.
+   Texte: lib/content.ts. Schrift: app/layout.tsx. */
 :root {
-  --background: #cbc8c5; /* Hintergrundfarbe der Seite, Dialoge und Schubladen */
-  --foreground: #171716; /* Haupttext, dunkle Buttons und Fokusrahmen */
-  --muted: #5e5b5a; /* Dezentere Farbe für Zusatztexte */
-  --border: #2c2b2a; /* Rahmenfarbe umrandeter Buttons */
-  --surface-overlay: rgb(23 23 22 / 24%); /* Abdunklung hinter geöffneten Fenstern; Prozentwert = Deckkraft */
-  --section-divider-color: rgb(23 23 22 / 14%); /* Dezente Trennlinien zwischen Inhaltsbereichen; Prozentwert = Deckkraft */
-  --section-divider-width: min(72%, 880px); /* Breite der mittig ausgerichteten Trennlinien */
-  --section-divider-height: 1px; /* Dicke der Trennlinien */
-  --font-body: var(--font-ibm-plex-mono), "Courier New", monospace; /* Schriftfamilie; IBM Plex Mono wird in app/layout.tsx geladen */
-  --text-small: 0.9375rem; /* Kleine Texte, unter anderem Menü, Buttons und Hinweise */
-  --text-body: 1.0625rem; /* Standardgröße für normalen Text */
-  --text-eyebrow: 0.75rem; /* Kleine Beschriftungen über Überschriften */
-  --text-title: clamp(2rem, 3.15vw, 2.875rem); /* Standardgröße der Abschnittsüberschriften (h2) */
-  --text-hero: clamp(2.5rem, 3.1vw, 3.625rem); /* Größe von „Die Essenz von Stil.“ (h1) */
-  --text-subtitle: clamp(1.375rem, 2.1vw, 1.75rem); /* Standardgröße kleinerer Überschriften (h3) */
-  --space-1: 0.5rem; /* Abstandsstufe 1: sehr klein */
-  --space-2: 1.125rem; /* Abstandsstufe 2: klein */
-  --space-3: 1.75rem; /* Abstandsstufe 3: mittel */
-  --space-4: 2.25rem; /* Abstandsstufe 4: groß */
-  --space-5: 3.25rem; /* Abstandsstufe 5: sehr groß */
-  --space-6: 4.25rem; /* Abstandsstufe 6: größter fester Abstand */
-  --space-section: clamp(5.5rem, 8.8vw, 8.5rem); /* Großer Abstand zwischen Inhaltsbereichen */
-  --page-gutter: clamp(1.5rem, 4vw, 4rem); /* Seitlicher Seitenabstand für Inhaltsbereiche */
-  --page-width: 1200px; /* Maximale Breite von Inhaltsbereichen und Fußbereich */
-  --header-height: 92px; /* Höhe der Kopfzeile */
-  --radius-pill: 999px; /* Rundung der normalen Buttons; hoher Wert ergibt eine Pillenform */
-  --radius-dialog: 4px; /* Eckenrundung der Dialogfenster */
-  --duration-ui: 220ms; /* Dauer kurzer Übergänge; kleinere Werte = schneller */
-  --duration-dialog: 320ms; /* Dauer beim Öffnen von Dialogen und Schubladen */
-  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1); /* Verlauf der Animationen: zum Ende hin langsamer */
-  /* Gemeinsame Schatten für die große Hose und beide Modelle in der zweiten Section. */
-  --hero-shadow-color: rgb(23 23 22 / 70%); /* Farbe der Hosenschatten; Prozentwert = Deckkraft */
-  --hero-shadow-width: 36%; /* Breite JE Schatten, relativ zum jeweiligen Hosenbildrahmen */
-  --hero-shadow-left-center: 33%; /* Horizontaler Mittelpunkt des linken Schattens */
-  --hero-shadow-right-center: 67%; /* Horizontaler Mittelpunkt des rechten Schattens */
-  --hero-shadow-height: 12px; /* Höhe bzw. Dicke beider Schatten */
-  --hero-shadow-blur: 7px; /* Weichzeichnung beider Schatten; größer = weicher */
+  --background: #d6d3ce;
+  --header-scrolled-background: #c8c3bc;
+  --foreground: #181817;
+  --muted: #575550;
+  --border: #66635e;
+  --surface-overlay: rgb(23 23 22 / 24%);
+  --font-body: var(--font-ocr-b), "Courier New", monospace;
+  --font-size-scale: 1.1; /* Alle Texte 10 % größer; erster Hero-Button bleibt ausgenommen. */
+  /* 300 = Überschriften, 400 = Fließtext, 500 = Hervorhebungen.
+     Alle Abschnittsüberschriften verwenden dieselbe Größe wie der Hero. */
+  --text-title: calc(clamp(1.5rem, 1.9vw, 2.25rem) * var(--font-size-scale));
+  --text-subtitle: calc(clamp(1.25rem, 1.6vw, 1.875rem) * var(--font-size-scale));
+  --text-body: calc(clamp(1rem, 1.2vw, 1.375rem) * var(--font-size-scale));
+  --text-small: var(--text-body);
+  --text-eyebrow: calc(clamp(0.8125rem, 1.2vw, 1.375rem) * var(--font-size-scale));
+  --text-button: calc(clamp(0.75rem, 0.85vw, 1rem) * var(--font-size-scale));
+  --tracking-title: 0.1em;
+  --page-width: 1680px;
+  --page-gutter: clamp(1.25rem, 4vw, 5rem);
+  --header-height: max(2.875rem, calc(clamp(3.125rem, calc(7.4vw - 2.75rem), 6.25rem) * 0.9));
+  --space-section: clamp(5rem, 8vw, 9rem);
+  --space-1: 0.5rem;
+  --space-2: 1.125rem;
+  --space-3: 1.75rem;
+  --space-4: 2.25rem;
+  --space-5: 3.25rem;
+  --space-6: 4.25rem;
+  --radius-pill: 999px;
+  --radius-dialog: 4px;
+  --duration-ui: 220ms;
+  --duration-dialog: 320ms;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-
-/* ========== 02 · TAILWIND-ANBINDUNG ==========
-  Reicht die zentralen Farben und die Schrift an Tailwind-Klassen weiter.
-  Für Farb- und Schriftänderungen normalerweise die Variablen oben bearbeiten. */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted-foreground: var(--muted);
   --font-sans: var(--font-body);
 }
-
-/* ========== 03 · GRUNDREGELN UND SCHRIFT ========== */
-/* Innenabstände und Rahmen sind in der angegebenen Breite und Höhe enthalten. */
-* {
-  box-sizing: border-box;
-}
-
-/* Seitenhintergrund, weiches Scrollen zu Abschnitten und Platz für die Scrollleiste. */
-html {
-  background: var(--background);
-  scroll-behavior: smooth;
-  scrollbar-gutter: stable;
-}
-
-/* Grundschrift und Farben der gesamten Seite. 300 = Light; die BASE-Schriftzüge nutzen 700 = Bold. */
+* { box-sizing: border-box; }
+html { background: var(--background); scroll-behavior: smooth; scrollbar-gutter: stable; }
 body {
   margin: 0;
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-body);
   font-size: var(--text-body);
-  font-weight: 300;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0.025em;
   -webkit-font-smoothing: antialiased;
 }
-
-/* Farben, wenn Besucher Text mit der Maus markieren. */
-::selection {
-  background: #ddd6d3;
-  color: #171716;
-}
-
-/* Entfernt die zusätzliche farbige Tipp-Markierung auf Touch-Geräten. */
-button, a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Buttons übernehmen die Schrift der Seite und zeigen einen Mauszeiger zum Klicken. */
-button {
-  font: inherit;
-  cursor: pointer;
-}
-
-/* Links übernehmen die Textfarbe ihres umgebenden Bereichs. */
-a {
-  color: inherit;
-}
-
-/* Entfernt die Standardabstände des Browsers bei Überschriften und Absätzen. */
-h1, h2, h3, p {
-  margin: 0;
-}
-
-/* Alle normalen Überschriften in Light; mehrzeilige Titel erhalten möglichst ausgeglichene Zeilen. */
-h1, h2, h3 {
-  font-weight: 300;
-  text-wrap: balance;
-}
-
-/* Hauptüberschrift „Die Essenz von Stil.“: Schriftgröße, Zeilenhöhe und Buchstabenabstand. */
-h1 {
-  font-size: var(--text-hero);
-  line-height: 1.12;
-  letter-spacing: -0.055em;
-}
-
-/* Standard für Abschnittsüberschriften, zum Beispiel „Eine Größe. Deine Länge.“. */
-h2 {
+::selection { background: #bcb7b0; color: var(--foreground); }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; font-family: var(--font-inter), Arial, sans-serif; cursor: pointer; }
+a { color: inherit; }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { text-wrap: balance; }
+h1, h2 {
   font-size: var(--text-title);
-  line-height: 1.18;
-  letter-spacing: -0.045em;
+  font-weight: 300;
+  line-height: 1.4;
+  letter-spacing: var(--tracking-title);
+  text-transform: uppercase;
 }
-
-/* Standard für kleinere Überschriften, zum Beispiel Modellnamen und Kürzungsoptionen. */
-h3 {
-  font-size: var(--text-subtitle);
-  line-height: 1.25;
-  letter-spacing: -0.035em;
+h3 { font-size: var(--text-subtitle); font-weight: 400; line-height: 1.4; letter-spacing: 0.065em; }
+/* Nur Textblöcke leicht vertikal stauchen, ohne Bilder oder Buttons zu verändern. */
+:where(h1, h2, h3, p, .wordmark, .footer-wordmark, .menu-links > a, .footer-nav a, .footer-bottom small, .footer-bottom > a) {
+  scale: 1 0.95;
 }
-
-/* Sichtbarer Rahmen bei Tastaturbedienung, etwa beim Wechseln mit der Tab-Taste. */
-:focus-visible {
-  outline: 2px solid var(--foreground);
-  outline-offset: 6px;
-}
-
-/* Kein zusätzlicher Rahmen um ganze Abschnitte nach einem Sprunglink. */
-section:focus, main:focus {
-  outline: none;
-}
-
-/* Dezentere Textfarbe für ergänzende Hinweise. */
-.muted {
-  color: var(--muted);
-}
-
-/* Sprunglink zum Inhalt: zunächst oberhalb des Bildschirms verborgen. */
+strong { font-weight: 500; }
+:focus-visible { outline: 2px solid var(--foreground); outline-offset: 6px; }
+section:focus, main:focus { outline: none; }
+.muted { color: var(--muted); }
 .skip-link {
-  position: fixed;
-  top: 12px;
-  left: 12px;
-  z-index: 100;
+  position: fixed; top: 12px; left: 12px; z-index: 100;
   padding: 12px 20px;
-  background: var(--foreground);
-  color: var(--background);
-  transform: translateY(-150%);
+  background: var(--foreground); color: var(--background);
+  transform: translateY(-180%);
 }
+.skip-link:focus { transform: translateY(0); }
 
-/* Zeigt den Sprunglink an, sobald er per Tastatur ausgewählt wird. */
-.skip-link:focus {
-  transform: translateY(0);
-}
-
-/* ========== 04 · KOPFZEILE / BASE / MENÜ / WARENKORB ========== */
-/* Kopfzeile: Menü links, BASE mittig, Warenkorb rechts. Höhe und seitliche Innenabstände. */
+/* Kopfzeile und Wortmarke */
 .site-header {
-  height: var(--header-height);
+  min-height: var(--header-height);
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   padding-inline: var(--page-gutter);
-  position: relative;
-  z-index: 5;
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 30;
+  background: var(--background);
+  border-block: 1px solid transparent;
+  transition: background-color var(--duration-ui), border-color var(--duration-ui), box-shadow var(--duration-ui);
 }
-
-/* BASE-Schriftzug im Kopfbereich und im Menü: Bold und weiter Buchstabenabstand. */
-.wordmark, .sheet-wordmark {
-  font-size: 44px;
-  font-weight: 700;
-  letter-spacing: 0.27em;
+.site-header[data-scrolled="true"] {
+  background: var(--header-scrolled-background);
+  border-bottom-color: rgb(24 24 23 / 12%);
+  box-shadow: 0 4px 16px rgb(24 24 23 / 5%);
+}
+/* Platz für den fixierten Header erhalten und Sprungziele sichtbar halten. */
+.page-content { padding-top: var(--header-height); }
+.page-content > main { scroll-margin-top: var(--header-height); }
+.wordmark {
+  font-family: var(--font-inter), Arial, sans-serif;
+  font-size: calc(clamp(1.375rem, 1.95vw, 2.375rem) * var(--font-size-scale));
+  font-weight: 400;
+  letter-spacing: 0.4em;
+  padding-left: 0.4em;
   line-height: 1;
   text-decoration: none;
 }
-
-/* BASE im Kopfbereich: Schriftgröße, Ausgleich des Buchstabenabstands und leichte Verbreiterung. */
-.wordmark {
-  font-size: 42px;
-  padding-left: 0.24em;
-  transform: scaleX(1.1);
+.site-header .header-control {
+  font-family: var(--font-body);
+  font-size: calc(clamp(0.75rem, 0.95vw, 1.5rem) * var(--font-size-scale));
+  font-weight: 500;
+  letter-spacing: 0.025em;
 }
+.menu-trigger { justify-self: start; }
+.cart-trigger { justify-self: end; }
+.cart-mobile { display: none; }
 
-/* Schriftgröße und Mindestbreite für Menü und Warenkorb. */
-.header-control {
-  font-size: var(--text-small);
-  min-width: 44px;
-}
-
-/* Menü-Schalter am linken Rand der Kopfzeile. */
-.menu-trigger {
-  justify-self: start;
-}
-
-/* Warenkorb-Schalter am rechten Rand der Kopfzeile. */
-.cart-trigger {
-  justify-self: end;
-}
-
-/* Kompakte Warenkorb-Anzeige; wird erst im Handy-Bereich eingeblendet. */
-.cart-mobile {
-  display: none;
-}
-
-/* ========== 05 · BUTTONS UND LINKS ========== */
-/* Gemeinsame Button-Einstellungen: Größe, Innenabstand, Rundung, Schrift und Farbübergänge. */
+/* Buttons */
 .base-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  font-family: var(--font-inter), Arial, sans-serif;
+  display: inline-flex; align-items: center; justify-content: center;
   gap: var(--space-1);
-  min-height: 48px;
-  padding: 12px 31px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-pill);
-  font-size: var(--text-small);
-  font-weight: 300;
-  line-height: 1.4;
-  text-decoration: none;
-  white-space: nowrap;
+  min-height: 48px; max-width: 100%;
+  padding: 0.65rem 1.75rem;
+  border: 1px solid transparent; border-radius: var(--radius-pill);
+  font-size: var(--text-button); font-weight: 400; line-height: 1.4; letter-spacing: 0.035em;
+  text-align: center; text-decoration: none;
   transition: background-color var(--duration-ui), color var(--duration-ui), border-color var(--duration-ui);
 }
-
-/* Deaktivierte Buttons erscheinen blasser und sind nicht bedienbar. */
-.base-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Gefüllter dunkler Button, zum Beispiel „Jetzt entdecken“. */
-.base-button--primary {
-  background: var(--foreground);
-  color: var(--background);
-}
-
-/* Button mit dünner Umrandung, zum Beispiel „Hosenlänge messen“. */
-.base-button--outline {
-  border-color: var(--border);
-  background: transparent;
-  color: var(--foreground);
-}
-
-/* Unterstrichener Text-Button, zum Beispiel „BASE I entdecken“. */
+.base-button:disabled { opacity: 0.5; cursor: not-allowed; }
+.base-button--primary { background: #080808; color: #f7f5f1; font-weight: 500; }
+.base-button--outline { border-color: var(--border); background: transparent; }
 .base-button--text {
-  padding: 9px 2px;
-  border-radius: 0;
-  background: transparent;
-  text-decoration-line: underline;
-  text-underline-offset: 6px;
-  text-decoration-thickness: 1px;
+  padding: 0.55rem 0; border-radius: 0; background: transparent;
+  text-decoration: underline; text-underline-offset: 0.35em; text-decoration-thickness: 1px;
 }
-
-/* Button für Symbole, etwa das Schließen-Kreuz; mindestens 44 × 44 px groß. */
-.base-button--icon {
-  padding: 8px;
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: 0;
-  background: transparent;
-}
-
-/* Mauseffekte nur auf Geräten, die echtes Darüberfahren unterstützen. */
+.base-button--icon { padding: 8px; min-width: 44px; min-height: 44px; border-radius: 0; background: transparent; }
 @media (hover: hover) {
-  /* Gefüllter Button beim Darüberfahren mit der Maus. */
-  .base-button--primary:hover {
-    background: #363432;
-  }
-
-  /* Umrandeter Button beim Darüberfahren: dunkle Füllung und heller Text. */
-  .base-button--outline:hover {
-    background: var(--foreground);
-    color: var(--background);
-  }
-
-  /* Text-Buttons, Menü und Warenkorb beim Darüberfahren. */
-  .base-button--text:hover, .header-control:hover {
-    color: var(--muted);
-  }
-
-  /* Menülinks beim Darüberfahren. */
-  .menu-links a:hover {
-    color: var(--muted);
-  }
+  .base-button--primary:hover { background: #34322f; }
+  .base-button--outline:hover { background: var(--foreground); color: var(--background); }
+  .base-button--text:hover, .header-control:hover, .menu-links a:hover { color: var(--muted); }
 }
 
-/* ========== 06 · GEMEINSAME INHALTS- UND BILDREGELN ========== */
-/* Schneidet überstehende Inhalte am Rand des Hauptbereichs ab. */
-.page-content {
-  overflow: clip;
-}
-
-/* Gemeinsame Abschnittsbreite, Zentrierung und Abstand beim Anspringen über einen Link. */
+/* Gemeinsame Abschnitts- und Bildregeln */
 .section {
-  width: min(100% - var(--page-gutter) * 2, var(--page-width));
-  margin-inline: auto;
-  text-align: center;
-  scroll-margin-top: var(--space-4);
-}
-
-/* SECTIONDIVIDER: Dünne Linie im freien Abstand vor jedem weiteren Inhaltsbereich.
-   Die erste Section erhält keine Linie. Die vorhandenen Abstände bleiben erhalten. */
-.section + .section {
-  position: relative;
-}
-
-.section + .section::before {
-  content: "";
-  position: absolute;
-  top: calc(var(--space-section) / 2);
-  inset-inline: 0;
-  margin-inline: auto;
-  width: var(--section-divider-width);
-  height: var(--section-divider-height);
-  background: var(--section-divider-color);
-  pointer-events: none;
-}
-
-/* Kleine Beschriftung über einer Überschrift, zum Beispiel „DIE BASE ANZUGSHOSE“ oder „SIZING“. */
-.eyebrow {
-  font-size: var(--text-eyebrow);
-  font-weight: 300;
-  line-height: 1.6;
-  letter-spacing: 0.36em;
-}
-
-/* Ordnet Beschriftung, Überschrift und Beschreibung untereinander an; gap steuert ihren Abstand. */
-.section-intro {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 22px;
-}
-
-/* Erklärender Text unter einer Abschnittsüberschrift. */
-.section-description {
-  color: var(--muted);
-  line-height: 1.5;
-  font-size: clamp(1rem, 1.6vw, 1.25rem);
-}
-
-/* Zentrierter Rahmen für Produktbilder; Bezugspunkt für die Position der Schatten. */
-.product-frame {
-  position: relative;
-  margin-inline: auto;
-}
-
-/* Produktbilder füllen ihren Rahmen, bleiben vollständig sichtbar und werden nicht verzerrt. */
-.product-image {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  user-select: none;
-}
-
-/* ========== 07 · GROSSE HOSE / ZWEI SCHATTEN / HAUPTÜBERSCHRIFT ========== */
-/* Oberster Inhaltsbereich mit der großen Hose: Abstand oberhalb des Bereichs. */
-.hero-section {
-  padding-top: 4px;
-}
-
-/* Größe der großen Hose. Die Bildhöhe steuert auch die Breite über das Seitenverhältnis 2:3. */
-.hero-frame {
-  height: clamp(420px, 60svh, 628px);
-  aspect-ratio: 2 / 3;
-  isolation: isolate;
-}
-
-/* Je zwei ovale Schatten unter der großen Hose und den Modellen BASE I / BASE II.
-   Gemeinsame Werte oben bei --hero-shadow-*; bottom bestimmt die Höhe ihrer Position. */
-.hero-frame::before,
-.hero-frame::after,
-.model-frame::before,
-.model-frame::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-  z-index: -1;
-  width: var(--hero-shadow-width);
-  height: var(--hero-shadow-height);
-  transform: translateX(-50%);
-  bottom: -15px; /* Vertikale Position: negativ = unterhalb des Bildrahmens; stärker negativ = weiter nach unten */
-  border-radius: 50%;
-  background: var(--hero-shadow-color);
-  filter: blur(var(--hero-shadow-blur));
-}
-
-/* Schatten unter dem linken Hosenbein: Mittelpunkt relativ zur Breite des Bildrahmens. */
-.hero-frame::before,
-.model-frame::before {
-  left: var(--hero-shadow-left-center);
-}
-
-/* Schatten unter dem rechten Hosenbein: Mittelpunkt relativ zur Breite des Bildrahmens. */
-.hero-frame::after,
-.model-frame::after {
-  left: var(--hero-shadow-right-center);
-}
-
-/* Abstand zwischen dem Bildrahmen der großen Hose und dem Text darunter. */
-.hero-copy {
-  margin-top: 36px;
-}
-
-/* Abstände oberhalb und unterhalb von „Die Essenz von Stil.“. */
-.hero-copy h1 {
-  margin-block: 15px 27px;
-}
-
-/* ========== 08 · MODELLE / BASE I UND BASE II ========== */
-/* Abstand vor dem Bereich „Zwei Schnitte. Eine Haltung.“. */
-.models-section {
-  padding-top: var(--space-section);
-}
-
-/* Schriftgröße der Überschrift „Zwei Schnitte. Eine Haltung.“; überschreibt den allgemeinen h2-Wert. */
-.models-section > h2 {
-  font-size: clamp(1.875rem, 2.75vw, 2.5rem);
-}
-
-/* Anordnung von BASE I und BASE II: Spalten, Abstand zwischen Modellen und Abstand zur Überschrift. */
-.models-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: var(--space-5);
-  gap: var(--space-6);
-}
-
-/* Größe der Hosenbilder bei BASE I und BASE II.
-   isolation hält die Schatten hinter dem Bild, aber vor dem Seitenhintergrund.
-   Die Schatten werden gemeinsam mit der großen Hose im Abschnitt oben eingestellt. */
-.model-frame {
-  height: clamp(390px, 39vw, 520px);
-  aspect-ratio: 2 / 3;
-  isolation: isolate;
-}
-
-/* Platz unter den Modellbildern für Schatten und Luft vor den Modellnamen. */
-.model-caption {
-  padding-top: 44px;
-}
-
-/* Modellnamen „BASE I“ und „BASE II“: Schriftgröße und Buchstabenabstand. */
-.model-caption h3 {
-  font-size: 27px;
-  letter-spacing: 0.055em;
-}
-
-/* Schnittbezeichnung unter dem Modellnamen, etwa „Wide Leg“. */
-.model-caption p {
-  margin-top: 9px;
-  color: var(--muted);
-}
-
-/* Abstand vor dem Entdecken-Link des jeweiligen Modells. */
-.model-caption .base-button {
-  margin-top: 15px;
-}
-
-/* ========== 09 · DEINE LÄNGE / KÜRZUNGSOPTIONEN ========== */
-/* Abstand vor „Eine Größe. Deine Länge.“. */
-.sizing-section {
-  padding-top: var(--space-section);
-}
-
-/* Größe und oberer Abstand des einzelnen Hosenbeins im Längen-Bereich. */
-.sizing-frame {
-  height: 340px;
-  aspect-ratio: 2 / 3;
-  margin-top: 28px;
-}
-
-/* Anordnung und Abstände der Optionen „Von uns gekürzt.“ und „Vor Ort angepasst.“. */
-.sizing-options {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-6);
-  margin-top: var(--space-3);
-}
-
-/* Erklärungstext unter einer Kürzungsoption: Abstand, Schriftgröße und Zeilenhöhe. */
-.sizing-option p {
-  margin-top: var(--space-2);
-  color: var(--muted);
+  /* Größenmaßstab der Startansicht für alle Inhaltsabschnitte. */
+  --text-title: calc(clamp(1.125rem, 1.5vw, 1.8125rem) * var(--font-size-scale));
+  --text-subtitle: calc(clamp(1rem, 1.25vw, 1.5rem) * var(--font-size-scale));
+  --text-body: calc(clamp(0.6875rem, 0.95vw, 2.25rem) * var(--font-size-scale));
+  --text-eyebrow: calc(clamp(0.625rem, 0.95vw, 2.25rem) * var(--font-size-scale));
   font-size: var(--text-body);
-  line-height: 1.5;
+  width: min(calc(100% - var(--page-gutter) * 2), var(--page-width));
+  margin-inline: auto; text-align: center;
+  scroll-margin-top: calc(var(--header-height) + var(--space-3));
 }
-
-/* Abstand vor dem Button einer Kürzungsoption. */
-.sizing-option .base-button {
-  margin-top: 24px;
+.section .base-button { font-size: var(--text-button); }
+.eyebrow {
+  font-size: var(--text-eyebrow); font-weight: 400; line-height: 1.5;
+  letter-spacing: 0.21em; text-transform: uppercase;
 }
+.section-intro { display: flex; flex-direction: column; align-items: center; gap: clamp(1.25rem, 2vw, 2.25rem); }
+.section-description { color: var(--muted); font-size: var(--text-body); line-height: 1.6; text-wrap: pretty; }
+.product-frame { position: relative; margin-inline: auto; }
+.product-image { display: block; width: 100%; height: 100%; object-fit: contain; user-select: none; }
 
-/* ========== 10 · MATERIAL / GEFALTETE HOSE ========== */
-/* Abstände vor und nach „Für jeden Tag gemacht.“. */
-.material-section {
-  padding-top: var(--space-section);
-  padding-bottom: var(--space-6);
+/* Gleiche weiche Hosenschatten für Hero und Modelle. */
+.hero-frame, .model-frame { isolation: isolate; }
+.hero-frame::before, .hero-frame::after, .model-frame::before, .model-frame::after {
+  content: ""; position: absolute; pointer-events: none; z-index: -1;
+  width: 32%; height: clamp(6px, 0.65vw, 12px); bottom: -0.6rem;
+  transform: translateX(-50%); border-radius: 50%;
+  background: rgb(34 32 28 / 36%); filter: blur(6px);
 }
+.hero-frame::before, .model-frame::before { left: 33%; }
+.hero-frame::after, .model-frame::after { left: 67%; }
 
-/* Breite und Seitenverhältnis des Bildes der gefalteten Hose. */
-.material-frame {
-  width: min(100%, 680px);
-  aspect-ratio: 3 / 2;
-  margin-top: 12px;
-}
-
-/* Position des Textblocks unter der gefalteten Hose; negative Werte ziehen ihn nach oben. */
-.material-caption {
-  margin-top: -8px;
-}
-
-/* Text „Weich. Waschbar. Bewegungsfreiheit.“: Schriftgröße und Buchstabenabstand. */
-.material-caption p {
-  font-size: clamp(1.25rem, 2vw, 1.75rem);
-  letter-spacing: -0.035em;
-  text-wrap: balance;
-}
-
-/* Abstand vor „BASE entdecken“ im Material-Bereich. */
-.material-caption .base-button {
-  margin-top: 11px;
-}
-
-/* ========== 11 · FUSSBEREICH / FOOTER ========== */
-/* Fußbereich: Breite sowie Innenabstände oben und unten. */
+/* Fußbereich, Dialoge und Schubladen */
 .site-footer {
   width: min(100% - var(--page-gutter) * 2, var(--page-width));
   margin-inline: auto;
   padding-block: var(--space-section) var(--space-4);
 }
 
-/* Spalten für BASE, ENTDECKEN und RECHTLICHES im Fußbereich. */
 .footer-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) repeat(2, minmax(180px, 0.5fr));
   gap: var(--space-6);
 }
 
-/* BASE-Schriftzug im Fußbereich: Größe, Bold und Buchstabenabstand. */
 .footer-wordmark {
   display: inline-block;
-  font-size: 34px;
-  font-weight: 700;
-  letter-spacing: 0.24em;
+  font-size: calc(2.25rem * var(--font-size-scale));
+  font-weight: 300;
+  letter-spacing: 0.21em;
   line-height: 1;
   text-decoration: none;
 }
 
-/* Text „Die Essenz von Stil.“ unter dem BASE-Schriftzug im Fußbereich. */
 .footer-brand p {
   margin-top: var(--space-3);
   color: var(--muted);
   font-size: var(--text-small);
 }
 
-/* Kleine Spaltenüberschriften „ENTDECKEN“ und „RECHTLICHES“. */
 .footer-nav .eyebrow {
-  font-size: 10px;
-  letter-spacing: 0.22em;
+  font-size: var(--text-eyebrow);
+  letter-spacing: 0.2em;
   line-height: 1.6;
 }
 
-/* Abstand der Linklisten zur Spaltenüberschrift; entfernt Aufzählungspunkte. */
 .footer-nav ul {
   margin: 22px 0 0;
   padding: 0;
   list-style: none;
 }
 
-/* Links im Fußbereich: Schriftgröße, Farbe und anklickbare Höhe. */
 .footer-nav a {
   display: inline-flex;
   align-items: center;
@@ -619,7 +236,6 @@ section:focus, main:focus {
   color: var(--muted);
 }
 
-/* Unterste Zeile mit Copyright und „Zurück nach oben“. */
 .footer-bottom {
   display: flex;
   align-items: center;
@@ -629,12 +245,10 @@ section:focus, main:focus {
   color: var(--muted);
 }
 
-/* Schriftgröße der untersten Fußzeile. */
 .footer-bottom small, .footer-bottom a {
-  font-size: 12px;
+  font-size: calc(0.8125rem * var(--font-size-scale));
 }
 
-/* Anordnung von „Zurück nach oben“ und Pfeil. */
 .footer-bottom a {
   display: inline-flex;
   align-items: center;
@@ -643,9 +257,8 @@ section:focus, main:focus {
   text-decoration: none;
 }
 
-/* Mauseffekte nur auf Geräten, die echtes Darüberfahren unterstützen. */
 @media (hover: hover) {
-  /* Fußbereich-Links beim Darüberfahren: dunkler und unterstrichen. */
+
   .footer-nav a:hover, .footer-bottom a:hover {
     color: var(--foreground);
     text-decoration: underline;
@@ -654,8 +267,6 @@ section:focus, main:focus {
   }
 }
 
-/* ========== 12 · DIALOGFENSTER UND HINTERGRUND ========== */
-/* Abgedunkelter Hintergrund hinter geöffneten Dialogen, Menü und Warenkorb. */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -663,17 +274,14 @@ section:focus, main:focus {
   background: var(--surface-overlay);
 }
 
-/* Blendet die Hintergrund-Abdunklung beim Öffnen ein. */
 .modal-overlay[data-state="open"] {
   animation: overlay-in var(--duration-ui) var(--ease-out);
 }
 
-/* Blendet die Hintergrund-Abdunklung beim Schließen aus. */
 .modal-overlay[data-state="closed"] {
   animation: overlay-out var(--duration-ui) var(--ease-out);
 }
 
-/* Gemeinsame Farben und Ebene für Dialogfenster und seitliche Schubladen. */
 .dialog-content, .sheet-content {
   position: fixed;
   z-index: 50;
@@ -681,7 +289,6 @@ section:focus, main:focus {
   color: var(--foreground);
 }
 
-/* Zentriertes Dialogfenster: Position, Breite, Höhe, Innenabstände und Textanordnung. */
 .dialog-content {
   top: 50%;
   left: 50%;
@@ -695,53 +302,44 @@ section:focus, main:focus {
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-3);
-  font-size: 1rem;
+  font-size: calc(1.125rem * var(--font-size-scale));
   line-height: 1.65;
 }
 
-/* Animation beim Öffnen eines Dialogfensters. */
 .dialog-content[data-state="open"] {
   animation: dialog-in var(--duration-dialog) var(--ease-out);
 }
 
-/* Animation beim Schließen eines Dialogfensters. */
 .dialog-content[data-state="closed"] {
   animation: overlay-out var(--duration-ui) var(--ease-out);
 }
 
-/* Abstand zwischen Titel und Beschreibung im Dialogkopf. */
 .modal-header {
   display: grid;
   gap: 14px;
 }
 
-/* Dialogüberschrift: Schriftgröße, Light und Zeilenhöhe. */
 .modal-title {
-  font-size: 29px;
+  font-size: var(--text-title);
   font-weight: 300;
-  letter-spacing: -0.04em;
+  letter-spacing: var(--tracking-title);
   line-height: 1.2;
 }
 
-/* Dezentere Farbe für Beschreibung und Hinweise im Dialog. */
 .modal-description, .dialog-note {
   color: var(--muted);
 }
 
-/* Schriftgröße kleiner Hinweise im Dialog. */
 .dialog-note {
   font-size: var(--text-small);
 }
 
-/* Position des Schließen-Kreuzes oben rechts. */
 .modal-close {
   position: absolute;
   right: 14px;
   top: 14px;
 }
 
-/* ========== 13 · SEITLICHES MENÜ UND WARENKORB ========== */
-/* Seitliche Schublade für Menü oder Warenkorb: Breite, Innenabstände und Scrollverhalten. */
 .sheet-content {
   top: 0;
   bottom: 0;
@@ -752,34 +350,30 @@ section:focus, main:focus {
   overflow-y: auto;
 }
 
-/* Menü links; legt die Richtung für das Hereinschieben fest. */
 .sheet-content[data-side="left"] {
   left: 0;
   --sheet-from: -100%;
 }
 
-/* Warenkorb rechts; legt die Richtung für das Hereinschieben fest. */
 .sheet-content[data-side="right"] {
   right: 0;
   --sheet-from: 100%;
 }
 
-/* Animation beim Öffnen einer seitlichen Schublade. */
 .sheet-content[data-state="open"] {
   animation: sheet-in var(--duration-dialog) var(--ease-out);
 }
 
-/* Animation beim Schließen einer seitlichen Schublade. */
 .sheet-content[data-state="closed"] {
   animation: sheet-out var(--duration-ui) var(--ease-out);
 }
 
-/* Schriftgröße von BASE innerhalb des geöffneten Menüs. */
 .sheet-wordmark {
-  font-size: 34px;
+  font-size: calc(2.25rem * var(--font-size-scale));
+  font-weight: 300;
+  letter-spacing: 0.37em;
 }
 
-/* Menülinks untereinander: Abstand zwischen Links und Abstand zum BASE-Schriftzug. */
 .menu-links {
   display: flex;
   flex-direction: column;
@@ -787,16 +381,14 @@ section:focus, main:focus {
   margin-top: 72px;
 }
 
-/* Schrift und anklickbare Höhe der Links im geöffneten Menü. */
 .menu-links a {
-  font-size: 25px;
+  font-size: calc(1.6875rem * var(--font-size-scale));
   line-height: 1.3;
-  letter-spacing: -0.025em;
+  letter-spacing: 0.01em;
   text-decoration: none;
   padding-block: 8px;
 }
 
-/* Hinweis am unteren Rand der Menü-Schublade. */
 .sheet-note {
   margin-top: auto;
   padding-top: 60px;
@@ -804,7 +396,6 @@ section:focus, main:focus {
   font-size: var(--text-small);
 }
 
-/* Anordnung und oberer Abstand der Meldung zum leeren Warenkorb. */
 .cart-empty {
   display: flex;
   flex-direction: column;
@@ -813,21 +404,16 @@ section:focus, main:focus {
   margin-top: 80px;
 }
 
-/* Überschrift der Meldung im Warenkorb. */
 .cart-empty h3 {
-  font-size: 25px;
+  font-size: calc(1.6875rem * var(--font-size-scale));
 }
 
-/* Erklärungstext im Warenkorb. */
 .cart-empty p {
   color: var(--muted);
   line-height: 1.65;
-  font-size: 1rem;
+  font-size: calc(1.125rem * var(--font-size-scale));
 }
 
-/* ========== 14 · ANIMATIONEN ==========
-  Die Dauer wird oben mit --duration-ui und --duration-dialog eingestellt. */
-/* Hintergrund oder Fenster einblenden. */
 @keyframes overlay-in {
   from {
     opacity: 0;
@@ -838,7 +424,6 @@ section:focus, main:focus {
   }
 }
 
-/* Hintergrund oder Fenster ausblenden. */
 @keyframes overlay-out {
   from {
     opacity: 1;
@@ -849,7 +434,6 @@ section:focus, main:focus {
   }
 }
 
-/* Dialog einblenden und leicht nach oben bewegen. */
 @keyframes dialog-in {
   from {
     opacity: 0;
@@ -862,7 +446,6 @@ section:focus, main:focus {
   }
 }
 
-/* Menü bzw. Warenkorb vom jeweiligen Bildschirmrand hereinschieben. */
 @keyframes sheet-in {
   from {
     transform: translateX(var(--sheet-from));
@@ -873,7 +456,6 @@ section:focus, main:focus {
   }
 }
 
-/* Menü bzw. Warenkorb zum jeweiligen Bildschirmrand hinausschieben. */
 @keyframes sheet-out {
   from {
     transform: translateX(0);
@@ -884,270 +466,32 @@ section:focus, main:focus {
   }
 }
 
-/* ========== 15 · TABLET: 768 BIS 1023 PX ==========
-  Nur die hier genannten Eigenschaften überschreiben die allgemeinen Regeln von oben. */
-@media (max-width: 1023px) and (min-width: 768px) {
-  /* Größe der großen Hose. Die Bildhöhe steuert auch die Breite über das Seitenverhältnis 2:3. */
-  .hero-frame {
-    height: 494px;
-  }
-
-  /* Kleinere Spaltenabstände für Modelle und Kürzungsoptionen auf Tablets. */
-  .models-grid, .sizing-options {
-    gap: var(--space-3);
-  }
-
-  /* Größe der Hosenbilder bei BASE I und BASE II. */
-  .model-frame {
-    height: 400px;
-  }
-
-  /* Breite und Seitenverhältnis des Bildes der gefalteten Hose. */
-  .material-frame {
-    width: 560px;
-  }
-}
-
-/* ========== 16 · HANDY: BIS 767 PX ==========
-  Hier stehen die kleineren Schriftgrößen, Bilder und Abstände sowie die einspaltige Anordnung.
-  Suche nach dem gleichen Klassennamen oben, um die übrigen Einstellungen zu finden. */
 @media (max-width: 767px) {
-  /* HANDY-EINSTELLUNGEN: Diese Werte ersetzen bis 767 px die zentralen Werte von oben. Änderungen oben wirken hier nur, wenn die Variable hier nicht erneut gesetzt wird. */
   :root {
-    --page-gutter: 20px; /* Seitlicher Seitenabstand für Inhaltsbereiche */
-    --header-height: 76px; /* Höhe der Kopfzeile */
-    --space-section: 64px; /* Großer Abstand zwischen Inhaltsbereichen */
-    --text-hero: clamp(1.875rem, 8.2vw, 2.75rem); /* Größe von „Die Essenz von Stil.“ (h1) */
-    --text-title: clamp(1.75rem, 7.2vw, 2.25rem); /* Standardgröße der Abschnittsüberschriften (h2) */
-    --text-subtitle: 1.375rem; /* Standardgröße kleinerer Überschriften (h3) */
-    --text-body: 0.9375rem; /* Standardgröße für normalen Text */
-    --text-eyebrow: 0.625rem; /* Kleine Beschriftungen über Überschriften */
-    --text-small: 0.875rem; /* Kleine Texte, unter anderem Menü, Buttons und Hinweise */
-    --hero-shadow-height: 6px; /* Höhe bzw. Dicke beider Schatten */
-    --hero-shadow-blur: 4px; /* Weichzeichnung beider Schatten; größer = weicher */
+    --page-gutter: 1.25rem;
+    --space-section: 4.5rem;
+    --tracking-title: 0.075em;
   }
-
-  /* Auf dem Handy keinen zusätzlichen Platz für die Scrollleiste reservieren. */
-  html {
-    scrollbar-gutter: auto;
-  }
-
-  /* Kopfzeile: Menü links, BASE mittig, Warenkorb rechts. Höhe und seitliche Innenabstände. */
-  .site-header {
-    padding-inline: 12px;
-  }
-
-  /* Größe des BASE-Schriftzugs in der Handy-Kopfzeile. */
-  .wordmark {
-    font-size: 29px;
-  }
-
-  /* Textversion des Warenkorbs auf kleinen Bildschirmen ausblenden. */
-  .cart-desktop {
-    display: none;
-  }
-
-  /* Zeigt auf dem Handy das Warenkorb-Symbol mit Anzahl an. */
-  .cart-mobile {
-    display: inline-flex;
-    gap: 5px;
-    align-items: center;
-  }
-
-  /* Schriftgröße und Mindestbreite für Menü und Warenkorb. */
-  .header-control {
-    padding-inline: 4px;
-    font-size: 14px;
-  }
-
-  /* Größe der großen Hose. Die Bildhöhe steuert auch die Breite über das Seitenverhältnis 2:3. */
-  .hero-frame {
-    height: clamp(295px, 43svh, 361px);
-  }
-
-  /* Abstand zwischen dem Bildrahmen der großen Hose und dem Text darunter. */
-  .hero-copy {
-    margin-top: 28px;
-  }
-
-  /* Abstände oberhalb und unterhalb von „Die Essenz von Stil.“. */
-  .hero-copy h1 {
-    margin-block: 12px 23px;
-  }
-
-  /* Größe des Buttons „Jetzt entdecken“ auf dem Handy. */
-  .hero-copy .base-button {
-    min-height: 48px;
-    padding-inline: 31px;
-  }
-
-  /* Abstand vor dem Bereich „Zwei Schnitte. Eine Haltung.“. */
-  .models-section {
-    padding-top: 54px;
-  }
-
-  /* Schriftgröße der Überschrift „Zwei Schnitte. Eine Haltung.“; überschreibt den allgemeinen h2-Wert. */
-  .models-section > h2 {
-    font-size: clamp(1.5rem, 6.45vw, 2rem);
-    letter-spacing: -0.045em;
-  }
-
-  /* Anordnung von BASE I und BASE II: Spalten, Abstand zwischen Modellen und Abstand zur Überschrift. */
-  .models-grid {
-    grid-template-columns: 1fr;
-    gap: 35px;
-    margin-top: 29px;
-  }
-
-  /* Größe der Hosenbilder bei BASE I und BASE II. */
-  .model-frame {
-    height: 275px;
-  }
-
-  /* Auch auf dem Handy genügend Platz für Schatten vor BASE I / BASE II lassen. */
-  .model-caption {
-    padding-top: 36px;
-  }
-
-  /* Modellnamen „BASE I“ und „BASE II“: Schriftgröße und Buchstabenabstand. */
-  .model-caption h3 {
-    font-size: 23px;
-  }
-
-  /* Schnittbezeichnung unter dem Modellnamen, etwa „Wide Leg“. */
-  .model-caption p {
-    margin-top: 6px;
-    font-size: 15px;
-  }
-
-  /* Abstand vor dem Entdecken-Link des jeweiligen Modells. */
-  .model-caption .base-button {
-    margin-top: 8px;
-  }
-
-  /* Ordnet Beschriftung, Überschrift und Beschreibung untereinander an; gap steuert ihren Abstand. */
-  .section-intro {
-    gap: 13px;
-  }
-
-  /* Erklärender Text unter einer Abschnittsüberschrift. */
-  .section-description {
-    font-size: 15px;
-    max-width: 350px;
-    line-height: 1.5;
-    text-wrap: pretty;
-  }
-
-  /* Größe und oberer Abstand des einzelnen Hosenbeins im Längen-Bereich. */
-  .sizing-frame {
-    height: 220px;
-    margin-top: 23px;
-  }
-
-  /* Anordnung und Abstände der Optionen „Von uns gekürzt.“ und „Vor Ort angepasst.“. */
-  .sizing-options {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    margin-top: 22px;
-  }
-
-  /* Erklärungstext unter einer Kürzungsoption: Abstand, Schriftgröße und Zeilenhöhe. */
-  .sizing-option p {
-    margin-top: 10px;
-    font-size: 14px;
-    line-height: 1.55;
-  }
-
-  /* Abstand vor dem Button einer Kürzungsoption. */
-  .sizing-option .base-button {
-    margin-top: 16px;
-  }
-
-  /* Abstände vor und nach „Für jeden Tag gemacht.“. */
-  .material-section {
-    padding-top: 64px;
-    padding-bottom: 36px;
-  }
-
-  /* Breite und Seitenverhältnis des Bildes der gefalteten Hose. */
-  .material-frame {
-    width: min(100%, 400px);
-    margin-top: 10px;
-  }
-
-  /* Position des Textblocks unter der gefalteten Hose; negative Werte ziehen ihn nach oben. */
-  .material-caption {
-    margin-top: 1px;
-  }
-
-  /* Text „Weich. Waschbar. Bewegungsfreiheit.“: Schriftgröße und Buchstabenabstand. */
-  .material-caption p {
-    font-size: clamp(1rem, 4.6vw, 1.375rem);
-  }
-
-  /* Abstand vor „BASE entdecken“ im Material-Bereich. */
-  .material-caption .base-button {
-    margin-top: 5px;
-  }
-
-  /* Zentriertes Dialogfenster: Position, Breite, Höhe, Innenabstände und Textanordnung. */
-  .dialog-content {
-    padding: 52px 24px 28px;
-  }
-
-  /* Seitliche Schublade für Menü oder Warenkorb: Breite, Innenabstände und Scrollverhalten. */
-  .sheet-content {
-    padding-inline: 28px;
-  }
-
-  /* Fußbereich: Breite sowie Innenabstände oben und unten. */
-  .site-footer {
-    padding-top: var(--space-6);
-    padding-bottom: var(--space-3);
-  }
-
-  /* Spalten für BASE, ENTDECKEN und RECHTLICHES im Fußbereich. */
-  .footer-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    column-gap: var(--space-3);
-    row-gap: 40px;
-  }
-
-  /* BASE und sein Untertitel nehmen auf dem Handy die gesamte Breite der Fußbereich-Spalten ein. */
-  .footer-brand {
-    grid-column: 1 / -1;
-  }
-
-  /* BASE-Schriftzug im Fußbereich: Größe, Bold und Buchstabenabstand. */
-  .footer-wordmark {
-    font-size: 30px;
-  }
-
-  /* Text „Die Essenz von Stil.“ unter dem BASE-Schriftzug im Fußbereich. */
-  .footer-brand p {
-    margin-top: 16px;
-  }
-
-  /* Links im Fußbereich: Schriftgröße, Farbe und anklickbare Höhe. */
-  .footer-nav a {
-    font-size: 13px;
-  }
-
-  /* Unterste Zeile mit Copyright und „Zurück nach oben“. */
-  .footer-bottom {
-    margin-top: var(--space-4);
-  }
+  html { scrollbar-gutter: auto; }
+  .section { --text-body: calc(0.6875rem * var(--font-size-scale)); --text-eyebrow: calc(0.6875rem * var(--font-size-scale)); }
+  .site-header { padding-inline: 0.75rem; }
+  .wordmark { font-size: calc(1.375rem * var(--font-size-scale)); letter-spacing: 0.28em; padding-left: 0.28em; }
+  .header-control { font-size: calc(0.8125rem * var(--font-size-scale)); padding-inline: 4px; }
+  .cart-desktop { display: none; }
+  .cart-mobile { display: inline-flex; align-items: center; gap: 4px; }
+  .dialog-content { padding: 3.25rem 1.5rem 1.75rem; }
+  .sheet-content { padding-inline: 1.75rem; }
+  .site-footer { padding-top: var(--space-6); padding-bottom: var(--space-3); }
+  .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem 1.5rem; }
+  .footer-brand { grid-column: 1 / -1; }
+  .footer-wordmark { font-size: calc(1.9375rem * var(--font-size-scale)); }
+  .footer-brand p { margin-top: 1rem; }
+  .footer-nav a { font-size: calc(0.875rem * var(--font-size-scale)); }
+  .footer-bottom { margin-top: var(--space-4); }
 }
 
-/* ========== 17 · WENIGER BEWEGUNG ==========
-  Berücksichtigt die Einstellung für reduzierte Bewegung im Betriebssystem. */
 @media (prefers-reduced-motion: reduce) {
-  /* Seitenhintergrund, weiches Scrollen zu Abschnitten und Platz für die Scrollleiste. */
-  html {
-    scroll-behavior: auto;
-  }
-
-  /* Verkürzt Animationen und Übergänge, wenn im Betriebssystem weniger Bewegung gewünscht ist. */
+  html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

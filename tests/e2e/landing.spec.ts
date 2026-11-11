@@ -66,6 +66,33 @@ test("static reference layout, imagery, centering and responsive order", async (
   await page.screenshot({ path: `artifacts/screenshots/${testInfo.project.name}-static.png`, fullPage: true });
 });
 
+test("fixed header changes background on scroll and leaves anchor headings visible", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await ready(page);
+  const header = page.getByRole("banner");
+  await expect(header).toHaveCSS("position", "fixed");
+  const headerBounds = (await header.boundingBox())!;
+  const logoBounds = (await header.locator(".wordmark").boundingBox())!;
+  const aboveLogo = logoBounds.y - headerBounds.y;
+  const belowLogo = headerBounds.y + headerBounds.height - logoBounds.y - logoBounds.height;
+  expect(Math.abs(aboveLogo - belowLogo)).toBeLessThan(1);
+  const initialColor = await header.evaluate((element) => getComputedStyle(element).backgroundColor);
+
+  await jump(page, 400);
+  expect((await header.boundingBox())!.y).toBe(0);
+  await expect.poll(() => header.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(initialColor);
+
+  await jump(page, 0);
+  await expect(header).toHaveCSS("background-color", initialColor);
+  await page.getByRole("link", { name: "Jetzt entdecken", exact: true }).click();
+  const heading = page.getByRole("heading", { name: "Zwei Schnitte. Eine Haltung.", exact: true });
+  await expect(heading).toBeInViewport();
+  await expect.poll(async () => {
+    const headerBounds = (await header.boundingBox())!;
+    return (await heading.boundingBox())!.y - headerBounds.y - headerBounds.height;
+  }).toBeGreaterThanOrEqual(0);
+});
+
 test("navigation, native anchors, cart and focus restoration", async ({ page }) => {
   await ready(page);
   await page.getByRole("button", { name: "Menü", exact: true }).click();
@@ -89,7 +116,7 @@ test("navigation, native anchors, cart and focus restoration", async ({ page }) 
 
 test("both models and measurement draft open accessible dialogs", async ({ page }) => {
   await ready(page);
-  for (const model of ["BASE I", "BASE II"]) {
+  for (const model of ["ASSISE I", "ASSISE II"]) {
     const trigger = page.getByRole("button", { name: `${model} entdecken`, exact: true });
     await trigger.click();
     const dialog = page.getByRole("dialog");

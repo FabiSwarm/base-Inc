@@ -74,7 +74,7 @@ export function PageReveals({ children }: { children: ReactNode }) {
     } catch (error) {
       media.revert();
       root.dataset.motion = "static";
-      console.error("BASE: Fade-ins konnten nicht initialisiert werden.", error);
+      console.error("ASSISE: Fade-ins konnten nicht initialisiert werden.", error);
     }
 
     return () => {

@@ -1,5 +1,6 @@
 import { ProductModel } from "@/components/product/product-model";
 import { content, models } from "@/lib/content";
+import "./models-section.css";
 
 export function ModelsSection() {
   return (
