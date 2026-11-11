@@ -188,9 +188,17 @@ section:focus, main:focus { outline: none; }
 
 /* Fußbereich, Dialoge und Schubladen */
 .site-footer {
+  --background: #1c1c19;
+  --foreground: #f0ece5;
+  --muted: #c6c0b6;
+  background: var(--background);
+  color: var(--foreground);
+  border-top: 1px solid rgb(240 236 229 / 12%);
+  padding-block: clamp(3rem, 6vw, 6rem) var(--space-4);
+}
+.footer-inner {
   width: min(100% - var(--page-gutter) * 2, var(--page-width));
   margin-inline: auto;
-  padding-block: var(--space-section) var(--space-4);
 }
 
 .footer-grid {

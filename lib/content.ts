@@ -43,4 +43,27 @@ export const content = {
     benefits: { before: "Weich.", emphasis: "Waschbar.", after: "Bewegungsfreiheit." },
     cta: "ASSISE entdecken",
   },
+  service: {
+    fit: {
+      title: "Dein Schnitt. Dein Stil.",
+      description: "Wide Leg oder Straight Leg? Lerne unsere beiden Schnitte kennen und finde die Silhouette, die zu dir passt.",
+      cta: "Schnitte vergleichen",
+    },
+    shipping: {
+      title: "Versand & Rücksendung",
+      description: "Lieferzeiten, Versandkosten und Rücksendung. Hier findest du zum Shopstart alle Informationen auf einen Blick.",
+      cta: "Mehr zum Versand",
+    },
+    alterations: {
+      title: "Auf deine Länge.",
+      description: "Von uns auf dein Maß gekürzt oder bei einer Schneiderei vor Ort angepasst. Du entscheidest, welcher Weg zu dir passt.",
+      cta: "Längenoptionen ansehen",
+    },
+    newsletter: {
+      eyebrow: "POST VON ASSISE",
+      title: "Bleib auf dem Laufenden.",
+      description: "Neue Modelle, Einblicke und Neuigkeiten rund um ASSISE.",
+      note: "Newsletter-Anmeldung ab Shopstart.",
+    },
+  },
 } as const;

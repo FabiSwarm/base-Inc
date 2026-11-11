@@ -17,6 +17,7 @@ Die Seite läuft unter http://localhost:3000. Für einen Produktionsstart: `pnpm
 - `lib/product-assets.ts`: tatsächliche Dateien und Bildabmessungen aus `public/product/`. Beide Modelle verwenden dieselbe unveränderte Frontansicht.
 - `lib/content.ts`: Seiteninhalte, Modelldaten, Hauptnavigation und Legal-Links.
 - `components/layout/site-footer.tsx`: Footer mit Entdecken- und Rechtliches-Navigation.
+- `components/sections/service-section.tsx` und `.css`: Servicebereich mit Passform, Versand, Änderungen und Newsletter-Zeile. Texte stehen in `lib/content.ts`.
 - `lib/motion-config.ts`: Fade-Dauer, Stagger, Ease und Auslöseabstand.
 - `components/motion/reveal.tsx`: einmalige GSAP-Fade-ins über IntersectionObserver. Ausschließlich Deckkraft; keine Produktfahrten, Zooms, Bildkopien, Pins oder Scroll-Timelines. Sichtbare Startinhalte bleiben direkt sichtbar. Reduzierte Bewegung, Tastaturfokus, Anker und fehlendes JavaScript werden berücksichtigt.
 
@@ -48,6 +49,7 @@ Abhängigkeit. Die Landingpage läuft weiterhin ohne Shopify-Zugangsdaten.
 
 ## Noch offen
 
+- Die Newsletter-Zeile zeigt „Anmeldung ab Shopstart“. Feld und Button sind bis zur Anbindung eines Newsletter-Dienstes deaktiviert; es werden keine Adressen gespeichert oder übertragen. Das Versandfenster verweist auf die noch ausstehenden Versandinformationen.
 - Die Legal-Links `/impressum`, `/datenschutz`, `/agb` und `/widerruf` sind als Navigation vorbereitet. Die Zielseiten und freigegebenen Rechtstexte sind ausdrücklich noch nicht implementiert.
 - Die Messanleitung ist ein gekennzeichneter Entwurf; Messmethode und Messpunkte müssen noch freigegeben werden.
 - Produktseiten, Preise, Verfügbarkeit, Warenkorb, Bestellung und Shop-API folgen. Bis dahin zeigen die Modell-Dialoge bekannte Angaben und der Warenkorb einen ehrlichen leeren Zustand.

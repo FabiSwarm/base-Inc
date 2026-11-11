@@ -20,7 +20,7 @@ async function noOverflow(page: Page) {
 test("static reference layout, imagery, centering and responsive order", async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await ready(page);
-  await expect(page.locator("main section")).toHaveCount(4);
+  await expect(page.locator("main section")).toHaveCount(5);
   await expect(page.locator("h1")).toHaveText("Die Essenz von Stil.");
   await expect(page.locator(".story-sprite, .story-overlay, .pin-spacer")).toHaveCount(0);
   const shadows = await page.locator(".hero-frame").evaluate((element) =>
@@ -133,6 +133,29 @@ test("both models and measurement draft open accessible dialogs", async ({ page 
   await expect(dialog).toBeHidden();
 });
 
+test("service cards navigate, shipping information opens, newsletter shows its upcoming state", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await ready(page);
+  const service = page.getByRole("region", { name: "Service & Neuigkeiten", exact: true });
+  await service.scrollIntoViewIfNeeded();
+  await expect(service.getByRole("link", { name: "Schnitte vergleichen" })).toHaveAttribute("href", "#modelle");
+  await expect(service.getByRole("textbox", { name: "Deine E-Mail-Adresse" })).toBeDisabled();
+  await expect(service.getByRole("button", { name: "Abonnieren", exact: true })).toBeDisabled();
+  await expect(service).toContainText("Newsletter-Anmeldung ab Shopstart.");
+  const shipping = service.getByRole("button", { name: "Mehr zum Versand" });
+  await shipping.click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("heading", { name: "Versand & Rücksendung", exact: true })).toBeVisible();
+  await expect(dialog).toContainText("zum Start unseres Online-Shops");
+  expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()).violations).toEqual([]);
+  await page.keyboard.press("Escape");
+  await expect(shipping).toBeFocused();
+  await service.getByRole("link", { name: "Längenoptionen ansehen" }).click();
+  await expect(page).toHaveURL(/#sizing$/);
+  await expect(page.getByRole("heading", { name: "Eine Größe. Deine Länge.", exact: true })).toBeInViewport();
+  await noOverflow(page);
+});
+
 test("fade-ins preserve product geometry, restored position and reduced motion", async ({ page }, testInfo) => {
   test.setTimeout(60_000);
   const errors: string[] = [];
@@ -187,7 +210,7 @@ test("static content survives disabled JavaScript", async ({ browser, baseURL },
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: testInfo.project.use.viewport });
   const page = await context.newPage();
   await page.goto(baseURL!);
-  await expect(page.locator("main section")).toHaveCount(4);
+  await expect(page.locator("main section")).toHaveCount(5);
   await expect(page.getByRole("heading", { name: "Die Essenz von Stil." })).toBeVisible();
   await expect(page.locator("[data-product]")).toHaveCount(5);
   for (const product of await page.locator("[data-product]").all()) await expect(product).toHaveCSS("opacity", "1");

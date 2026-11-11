@@ -1,0 +1,61 @@
+/* SERVICE: drei ruhige Spalten, darunter die Newsletter-Zeile. */
+.service-section {
+  --foreground: #f0ece5;
+  --muted: #c6c0b6;
+  --border: #837e75;
+  background: #272722;
+  color: var(--foreground);
+  margin-top: clamp(2rem, 4vw, 4rem);
+  padding-block: clamp(3.5rem, 6vw, 6rem);
+  scroll-margin-top: calc(var(--header-height) + var(--space-3));
+}
+.service-inner { text-align: left; }
+.service-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(2rem, 5vw, 5rem); }
+.service-card { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.service-icon { color: var(--muted); margin-bottom: 1.5rem; }
+.service-card h3 { font-size: var(--text-subtitle); font-weight: 400; letter-spacing: 0.035em; text-wrap: pretty; }
+.service-card > p { color: var(--muted); margin-block: 0.875rem 1rem; line-height: 1.6; max-width: 40ch; }
+.service-card .base-button { margin-top: auto; letter-spacing: 0.015em; }
+.service-section :focus-visible { outline-color: var(--foreground); }
+
+.newsletter {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 5rem);
+  margin-top: clamp(2.5rem, 5vw, 5rem);
+  padding-top: clamp(2.5rem, 5vw, 5rem);
+  border-top: 1px solid rgb(240 236 229 / 16%);
+}
+.newsletter-copy .eyebrow { color: var(--muted); margin-bottom: 0.75rem; }
+.newsletter-copy h3 { font-size: var(--text-title); font-weight: 350; letter-spacing: 0.065em; }
+.newsletter-copy > p:last-child { margin-top: 0.75rem; color: var(--muted); max-width: 42ch; }
+.newsletter-form { min-width: 0; }
+.newsletter-field { display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem; background: rgb(255 255 255 / 5%); border: 1px solid rgb(240 236 229 / 20%); border-radius: 4px; }
+.newsletter-field input {
+  min-width: 0;
+  width: 100%;
+  padding: 0.75rem;
+  background: transparent;
+  color: var(--foreground);
+  border: 0;
+  font-family: var(--font-inter), Arial, sans-serif;
+  font-size: var(--text-button);
+  opacity: 1;
+}
+.newsletter-field input::placeholder { color: var(--muted); opacity: 1; }
+.newsletter-field .base-button { flex-shrink: 0; padding-inline: 1.25rem; opacity: 0.65; }
+.newsletter-form > p { color: var(--muted); font-size: var(--text-body); margin-top: 0.75rem; }
+@media (max-width: 1023px) {
+  .service-grid { gap: 1.75rem; }
+  .newsletter { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .newsletter-form { width: min(100%, 36rem); }
+}
+@media (max-width: 767px) {
+  .service-grid { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .service-card + .service-card { padding-top: 2rem; border-top: 1px solid rgb(240 236 229 / 12%); }
+  .service-icon { margin-bottom: 1rem; }
+  .service-card > p { max-width: 44ch; margin-bottom: 0.5rem; }
+  .newsletter-field { flex-direction: column; align-items: stretch; gap: 0.25rem; }
+  .newsletter-field .base-button { align-self: flex-start; margin: 0 0.5rem 0.5rem; }
+}
